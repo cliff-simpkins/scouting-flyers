@@ -41,9 +41,13 @@ async def health_check():
     return {"status": "healthy"}
 
 
-# API v1 router (to be added)
-# from app.routers import auth, projects, zones, assignments, houses
-# app.include_router(auth.router, prefix=settings.API_V1_PREFIX, tags=["auth"])
+# API v1 routers
+from app.routers import auth
+
+app.include_router(auth.router, prefix=settings.API_V1_PREFIX, tags=["auth"])
+
+# To be added:
+# from app.routers import projects, zones, assignments, houses
 # app.include_router(projects.router, prefix=settings.API_V1_PREFIX, tags=["projects"])
 # app.include_router(zones.router, prefix=settings.API_V1_PREFIX, tags=["zones"])
 # app.include_router(assignments.router, prefix=settings.API_V1_PREFIX, tags=["assignments"])
