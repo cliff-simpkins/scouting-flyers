@@ -1,0 +1,9 @@
+{
+  "short_name": "Flyers",
+  "name": "Volunteer Flyer Distribution",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

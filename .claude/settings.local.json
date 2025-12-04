@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(git -C \"C:\\Users\\cliff\\Code Projects\\VSC-Claude - Scouting-Flyers\\scouting-flyers\" log --oneline -10)",
+      "Bash(git -C:*)",
+      "Bash(dir:*)",
+      "Bash(powershell -Command \"Get-ChildItem -Force | Select-Object Name, Attributes\")",
+      "Bash(git add:*)",
+      "Bash(del nul)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
