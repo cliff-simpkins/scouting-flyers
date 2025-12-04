@@ -9,7 +9,17 @@
       "Bash(git add:*)",
       "Bash(del nul)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(pip --version:*)",
+      "Bash(python -m venv:*)",
+      "Bash(venv/Scripts/pip install:*)",
+      "Bash(venv/Scripts/python:*)",
+      "Bash(curl:*)",
+      "Bash(node --version:*)",
+      "Bash(npm --version:*)",
+      "Bash(npm install:*)",
+      "Bash(npm start)",
+      "Bash(BROWSER=none npm start)"
     ],
     "deny": [],
     "ask": []

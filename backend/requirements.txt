@@ -12,7 +12,7 @@ geoalchemy2==0.14.2
 
 # Geospatial
 shapely==2.0.2
-fastkml==1.0a5
+fastkml==1.4.0
 lxml==4.9.3
 
 # Authentication & Security
@@ -28,8 +28,5 @@ pydantic==2.5.2
 pydantic-settings==2.1.0
 email-validator==2.1.0
 
-# CORS
-python-cors==1.0.0
-
-# Rate limiting
-slowapi==0.1.9
+# Rate limiting (optional)
+# slowapi==0.1.9
