@@ -1,7 +1,11 @@
 """Main FastAPI application"""
+from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
+
+# Track server start time
+SERVER_START_TIME = datetime.utcnow()
 
 # Create FastAPI application
 app = FastAPI(
@@ -23,6 +27,7 @@ app.add_middleware(
 )
 
 
+
 # Root endpoint
 @app.get("/")
 async def root():
@@ -37,19 +42,36 @@ async def root():
 # Health check endpoint
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
-    return {"status": "healthy"}
+    """Health check endpoint with server info"""
+    return {
+        "status": "healthy",
+        "version": settings.APP_VERSION,
+        "start_time": SERVER_START_TIME.isoformat(),
+        "uptime_seconds": (datetime.utcnow() - SERVER_START_TIME).total_seconds()
+    }
+
+
+# Server info endpoint (test)
+@app.get("/server-info")
+async def server_info():
+    """Server information endpoint"""
+    return {
+        "status": "healthy",
+        "version": settings.APP_VERSION,
+        "start_time": SERVER_START_TIME.isoformat(),
+        "uptime_seconds": (datetime.utcnow() - SERVER_START_TIME).total_seconds()
+    }
 
 
 # API v1 routers
-from app.routers import auth
+from app.routers import auth, projects, zones
 
 app.include_router(auth.router, prefix=settings.API_V1_PREFIX, tags=["auth"])
+app.include_router(projects.router, prefix=settings.API_V1_PREFIX)
+app.include_router(zones.router, prefix=settings.API_V1_PREFIX)
 
 # To be added:
-# from app.routers import projects, zones, assignments, houses
-# app.include_router(projects.router, prefix=settings.API_V1_PREFIX, tags=["projects"])
-# app.include_router(zones.router, prefix=settings.API_V1_PREFIX, tags=["zones"])
+# from app.routers import assignments, houses
 # app.include_router(assignments.router, prefix=settings.API_V1_PREFIX, tags=["assignments"])
 # app.include_router(houses.router, prefix=settings.API_V1_PREFIX, tags=["houses"])
 

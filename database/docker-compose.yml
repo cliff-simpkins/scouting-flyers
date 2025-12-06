@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: flyers-postgres:17-postgis-pgvector
+    container_name: postgres-postgis-pgvector
+    restart: unless-stopped
+    ports:
+      - "2775:5432"
+    environment:
+      # IMPORTANT: Replace with your actual PostgreSQL superuser password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+    volumes:
+      # This will persist your database data
+      # IMPORTANT: Update this path to match your Synology volume structure
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - flyers-network
+
+volumes:
+  postgres_data:
+    # If you want to use an existing volume, comment out the above line and use:
+    # external: true
+    # name: your_existing_volume_name
+
+networks:
+  flyers-network:
+    driver: bridge

@@ -177,7 +177,7 @@ SELECT
     u.id AS volunteer_id,
     u.name AS volunteer_name,
     u.email AS volunteer_email,
-    za.project_id,
+    z.project_id,
     COUNT(DISTINCT za.zone_id) AS zones_assigned,
     COUNT(DISTINCT hv.id) AS houses_visited,
     MAX(hv.visited_at) AS last_visit
@@ -185,7 +185,7 @@ FROM users u
 JOIN zone_assignments za ON u.id = za.volunteer_id
 LEFT JOIN house_visits hv ON za.id = hv.zone_assignment_id
 JOIN zones z ON za.zone_id = z.id
-GROUP BY u.id, u.name, u.email, za.project_id;
+GROUP BY u.id, u.name, u.email, z.project_id;
 
 -- Grant necessary permissions
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO flyers_user;

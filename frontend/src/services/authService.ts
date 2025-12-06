@@ -6,6 +6,51 @@ import { User, AuthResponse, LoginResponse } from '../types';
 
 class AuthService {
   /**
+   * Register new user with email and password
+   */
+  async register(email: string, password: string, name: string): Promise<AuthResponse> {
+    try {
+      const response = await api.post<AuthResponse>('/auth/register', {
+        email,
+        password,
+        name
+      });
+
+      const { access_token } = response.data;
+
+      // Store access token
+      localStorage.setItem('access_token', access_token);
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to register:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Login with email and password
+   */
+  async login(email: string, password: string): Promise<AuthResponse> {
+    try {
+      const response = await api.post<AuthResponse>('/auth/login', {
+        email,
+        password
+      });
+
+      const { access_token } = response.data;
+
+      // Store access token
+      localStorage.setItem('access_token', access_token);
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to login:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Initiate Google OAuth login
    * Redirects user to Google consent screen
    */
@@ -32,7 +77,7 @@ class AuthService {
         params: { code, state }
       });
 
-      const { access_token, user } = response.data;
+      const { access_token } = response.data;
 
       // Store access token
       localStorage.setItem('access_token', access_token);

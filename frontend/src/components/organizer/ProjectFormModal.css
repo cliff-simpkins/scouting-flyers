@@ -1,0 +1,41 @@
+.project-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-form__error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.project-form__textarea {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.project-form__textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.project-form__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.project-form__actions .btn {
+  flex: 1;
+}

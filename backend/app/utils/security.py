@@ -1,9 +1,14 @@
-"""Security utilities for JWT tokens"""
+"""Security utilities for JWT tokens and password hashing"""
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from jose import jwt, JWTError
+from passlib.context import CryptContext
 from app.config import settings
 from uuid import UUID
+import time
+
+# Password hashing context
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def create_access_token(user_id: UUID) -> str:
@@ -57,9 +62,9 @@ def verify_token(token: str, token_type: str = "access") -> Optional[Dict[str, A
         if payload.get("type") != token_type:
             return None
 
-        # Verify expiration
+        # Verify expiration (compare Unix timestamps to avoid timezone issues)
         exp = payload.get("exp")
-        if not exp or datetime.utcnow() > datetime.fromtimestamp(exp):
+        if not exp or int(time.time()) > exp:
             return None
 
         return payload
@@ -83,3 +88,13 @@ def get_user_id_from_token(token: str) -> Optional[UUID]:
         return UUID(user_id_str)
     except (ValueError, AttributeError):
         return None
+
+
+def hash_password(password: str) -> str:
+    """Hash a password using bcrypt"""
+    return pwd_context.hash(password)
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify a password against its hash"""
+    return pwd_context.verify(plain_password, hashed_password)

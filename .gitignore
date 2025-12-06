@@ -46,6 +46,7 @@ ENV/
 *.swo
 *~
 .DS_Store
+Thumbs.db
 
 # Node / React
 node_modules/
@@ -77,3 +78,16 @@ alembic/versions/*.pyc
 # Logs
 logs/
 *.log
+
+# Authentication & Testing Artifacts
+cookies.txt
+*_token.txt
+*_response.json
+*_login.json
+test_token*.txt
+
+# Null device output files
+nul
+
+# Claude/AI Assistant Local Settings
+.claude/settings.local.json

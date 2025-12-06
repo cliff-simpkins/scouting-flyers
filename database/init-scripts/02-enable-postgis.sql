@@ -9,5 +9,5 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 -- Verify PostGIS installation
 SELECT PostGIS_version();
 
--- Grant usage on PostGIS
+-- Grant usage on PostGIS spatial reference system table
 GRANT ALL ON spatial_ref_sys TO flyers_user;

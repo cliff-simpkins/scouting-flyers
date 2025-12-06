@@ -1,0 +1,71 @@
+.duplicate-zone-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.duplicate-zone-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.duplicate-zone-modal__header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.duplicate-zone-modal__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.duplicate-zone-modal__body {
+  padding: 24px;
+}
+
+.duplicate-zone-modal__message {
+  font-size: 14px;
+  color: #374151;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.duplicate-zone-modal__question {
+  font-size: 14px;
+  color: #374151;
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.duplicate-zone-modal__actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.duplicate-zone-modal__button {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .duplicate-zone-modal__actions {
+    grid-template-columns: 1fr;
+  }
+}

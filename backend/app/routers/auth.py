@@ -7,10 +7,15 @@ from typing import Optional
 
 from app.database import get_db
 from app.models.user import User
-from app.schemas.user import User as UserSchema
-from app.schemas.token import Token
+from app.schemas.auth import UserRegistration, UserLogin, TokenResponse, UserResponse
 from app.services.oauth_service import google_oauth_service
-from app.utils.security import create_access_token, create_refresh_token, verify_token
+from app.utils.security import (
+    create_access_token,
+    create_refresh_token,
+    verify_token,
+    hash_password,
+    verify_password
+)
 from app.dependencies import get_current_user
 from uuid import UUID
 
@@ -19,6 +24,142 @@ router = APIRouter()
 # In-memory store for OAuth state (in production, use Redis)
 # Format: {state: timestamp}
 oauth_states = {}
+
+
+@router.post("/auth/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+async def register(
+    user_data: UserRegistration,
+    db: Session = Depends(get_db)
+):
+    """
+    Register a new user with email and password
+
+    Args:
+        user_data: User registration data
+        db: Database session
+
+    Returns:
+        JWT tokens and user info
+    """
+    # Check if user already exists
+    existing_user = db.query(User).filter(User.email == user_data.email).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+
+    # Create new user
+    user = User(
+        email=user_data.email,
+        name=user_data.name,
+        password_hash=hash_password(user_data.password),
+        last_login=datetime.utcnow()
+    )
+
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    # Generate JWT tokens
+    access_token = create_access_token(user.id)
+    refresh_token = create_refresh_token(user.id)
+
+    # Create response with refresh token in httpOnly cookie
+    response = JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content={
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": {
+                "id": str(user.id),
+                "email": user.email,
+                "name": user.name,
+                "picture_url": user.picture_url,
+                "created_at": user.created_at.isoformat(),
+                "last_login": user.last_login.isoformat() if user.last_login else None
+            }
+        }
+    )
+
+    # Set refresh token in httpOnly cookie
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=False,  # Set to True in production with HTTPS
+        samesite="lax",
+        max_age=604800  # 7 days in seconds
+    )
+
+    return response
+
+
+@router.post("/auth/login", response_model=TokenResponse)
+async def login(
+    credentials: UserLogin,
+    db: Session = Depends(get_db)
+):
+    """
+    Login with email and password
+
+    Args:
+        credentials: User login credentials
+        db: Database session
+
+    Returns:
+        JWT tokens and user info
+    """
+    # Find user by email
+    user = db.query(User).filter(User.email == credentials.email).first()
+
+    if not user or not user.password_hash:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password"
+        )
+
+    # Verify password
+    if not verify_password(credentials.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password"
+        )
+
+    # Update last login
+    user.last_login = datetime.utcnow()
+    db.commit()
+    db.refresh(user)
+
+    # Generate JWT tokens
+    access_token = create_access_token(user.id)
+    refresh_token = create_refresh_token(user.id)
+
+    # Create response with refresh token in httpOnly cookie
+    response = JSONResponse(content={
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": str(user.id),
+            "email": user.email,
+            "name": user.name,
+            "picture_url": user.picture_url,
+            "created_at": user.created_at.isoformat(),
+            "last_login": user.last_login.isoformat() if user.last_login else None
+        }
+    })
+
+    # Set refresh token in httpOnly cookie
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=False,  # Set to True in production with HTTPS
+        samesite="lax",
+        max_age=604800  # 7 days in seconds
+    )
+
+    return response
 
 
 @router.get("/auth/google/login")
@@ -138,7 +279,7 @@ async def google_callback(
     return response
 
 
-@router.post("/auth/refresh", response_model=Token)
+@router.post("/auth/refresh")
 async def refresh_access_token(
     refresh_token: Optional[str] = Cookie(None),
     db: Session = Depends(get_db)
@@ -214,7 +355,7 @@ async def logout(response: Response):
     return {"message": "Logged out successfully"}
 
 
-@router.get("/auth/me", response_model=UserSchema)
+@router.get("/auth/me", response_model=UserResponse)
 async def get_current_user_info(
     current_user: User = Depends(get_current_user)
 ):

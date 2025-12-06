@@ -1,0 +1,56 @@
+version: '3.8'
+
+# This is a simplified version for Portainer Stacks
+# Assumes you've already built the image via SSH or it will pull from registry
+
+services:
+  postgres:
+    # Option 1: Use locally built image (build via SSH first)
+    image: flyers-postgres:17-postgis-pgvector
+
+    # Option 2: Build from Dockerfile (requires files uploaded to Synology)
+    # Uncomment below and comment out 'image' line above if you want to build in Portainer
+    # build:
+    #   context: /volume1/docker/flyers-postgres
+    #   dockerfile: Dockerfile
+
+    container_name: postgres-postgis-pgvector
+    restart: unless-stopped
+
+    ports:
+      - "2775:5432"
+
+    environment:
+      # Set this in Portainer Stack environment variables
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+
+    volumes:
+      # Option A: Create new volume (recommended for fresh start)
+      - postgres_data:/var/lib/postgresql/data
+
+      # Option B: Use existing volume (uncomment and replace volume name)
+      # - <your_existing_volume_name>:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - flyers-network
+
+volumes:
+  postgres_data:
+    # For new volume, leave as-is
+    driver: local
+
+    # For existing volume, uncomment below
+    # external: true
+    # name: <your_existing_volume_name>
+
+networks:
+  flyers-network:
+    driver: bridge

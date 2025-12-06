@@ -2,7 +2,7 @@
 -- Run this script as PostgreSQL superuser (postgres)
 
 -- Create database user
-CREATE USER flyers_user WITH PASSWORD 'YOUR_SECURE_PASSWORD_HERE';
+CREATE USER flyers_user WITH PASSWORD 'x1ONQ71pb_vRMbarHtd7Z8b39uSW3_LF';
 
 -- Create database
 CREATE DATABASE flyers_db

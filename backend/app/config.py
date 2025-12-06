@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     # JWT
     JWT_SECRET: str
     JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 43200  # 30 days (30 * 24 * 60)
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30  # Also increased to 30 days
 
     # CORS
     CORS_ORIGINS: str = "http://localhost:3000"

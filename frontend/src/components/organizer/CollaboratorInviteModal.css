@@ -1,0 +1,91 @@
+.collaborator-invite-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.collaborator-invite-form__error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.collaborator-invite-form__error-message {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.collaborator-invite-form__error-details {
+  margin-top: 8px;
+  border-top: 1px solid rgba(114, 28, 36, 0.2);
+  padding-top: 8px;
+}
+
+.collaborator-invite-form__error-toggle {
+  background: none;
+  border: none;
+  color: #721c24;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 0;
+  text-align: left;
+  width: 100%;
+  transition: opacity 0.2s;
+}
+
+.collaborator-invite-form__error-toggle:hover {
+  opacity: 0.8;
+}
+
+.collaborator-invite-form__error-code {
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(114, 28, 36, 0.2);
+  border-radius: 4px;
+  color: #333;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  margin-top: 8px;
+  max-height: 200px;
+  overflow: auto;
+  padding: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.collaborator-invite-form__role-descriptions {
+  background-color: #f8f9fa;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.collaborator-invite-form__role-description {
+  font-size: 13px;
+  color: #666;
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.collaborator-invite-form__role-description:first-child {
+  margin-top: 0;
+}
+
+.collaborator-invite-form__role-description:last-child {
+  margin-bottom: 0;
+}
+
+.collaborator-invite-form__role-description strong {
+  color: #333;
+}
+
+.collaborator-invite-form__actions {
+  display: flex;
+  gap: 12px;
+}
+
+.collaborator-invite-form__actions .btn {
+  flex: 1;
+}

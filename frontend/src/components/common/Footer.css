@@ -1,0 +1,59 @@
+.footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #6c757d;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.footer--error {
+  background-color: #f8d7da;
+  border-top-color: #f5c6cb;
+  color: #721c24;
+}
+
+.footer__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.footer__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer__item strong {
+  font-weight: 600;
+}
+
+.footer__separator {
+  color: #adb5bd;
+}
+
+.footer__status {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.footer__status--healthy {
+  color: #28a745;
+}
+
+.footer__status--unhealthy {
+  color: #dc3545;
+}
+
+/* Add bottom padding to main content to prevent overlap */
+body {
+  padding-bottom: 40px;
+}

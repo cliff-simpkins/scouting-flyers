@@ -112,6 +112,24 @@ npm start
 
 ## Development
 
+### Recommended: Auto-Restart Watcher
+
+For the best development experience on Windows, use the auto-restart watcher:
+
+1. Double-click `dev-tools/watch-backend.bat`
+2. In a separate terminal: `cd frontend && npm start`
+3. Make code changes - backend restarts automatically!
+
+**Why use this?** The watcher provides reliable auto-restart on Windows, where uvicorn's built-in `--reload` flag can be unreliable.
+
+### Alternative: Manual Restart
+
+If you prefer manual control:
+- **Backend:** Double-click `dev-tools/restart-backend.bat`
+- **Frontend:** `cd frontend && npm start`
+
+See `dev-tools/README.md` for more information.
+
 ### Database Migrations
 
 ```bash
@@ -137,6 +155,26 @@ npm test
 ## Deployment
 
 See `docs/DEPLOYMENT.md` for instructions on deploying to Synology via Portainer.
+
+## Security
+
+This project uses environment variables for sensitive configuration.
+
+**Never commit:**
+- `.env` files with real credentials
+- Authentication tokens or cookies
+- Database passwords or connection strings
+- JWT secrets or API keys
+
+**Always use:**
+- `.env.example` templates for documentation
+- Environment-specific variables in deployment
+- Separate `.env` files for development, staging, and production
+
+**Credentials Protection:**
+- All `.env` files are in `.gitignore`
+- Real credentials should only exist locally or in secure deployment environments
+- Rotate secrets immediately if accidentally committed
 
 ## User Roles
 

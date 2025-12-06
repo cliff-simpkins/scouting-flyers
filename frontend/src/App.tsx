@@ -1,24 +1,30 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import OAuthCallback from './pages/OAuthCallback';
+import ProjectListPage from './pages/organizer/ProjectListPage';
+import ProjectDetailPage from './pages/organizer/ProjectDetailPage';
+import Footer from './components/common/Footer';
 import './App.css';
 
 function App() {
+  const showFooter = process.env.REACT_APP_SHOW_FOOTER === 'true';
+
   return (
     <Router>
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<OAuthCallback />} />
-          <Route path="/" element={
-            <ProtectedRoute>
-              <DashboardLayout />
-            </ProtectedRoute>
-          } />
+
+          <Route path="/" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+            <Route index element={<Navigate to="/projects" replace />} />
+            <Route path="projects" element={<ProjectListPage />} />
+            <Route path="projects/:id" element={<ProjectDetailPage />} />
+          </Route>
         </Routes>
+        {showFooter && <Footer />}
       </AuthProvider>
     </Router>
   );
@@ -80,48 +86,8 @@ function DashboardLayout() {
         </div>
       </header>
       <main>
-        <HomePage />
+        <Outlet />
       </main>
-    </div>
-  );
-}
-
-function HomePage() {
-  const { user } = useAuth();
-
-  return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <h2>Welcome back, {user?.name}!</h2>
-      <p style={{ marginTop: '1rem', color: '#666' }}>
-        You're successfully authenticated with Google OAuth.
-      </p>
-      <div style={{
-        marginTop: '2rem',
-        padding: '1.5rem',
-        background: '#f8f9fa',
-        borderRadius: '8px',
-        maxWidth: '600px',
-        margin: '2rem auto'
-      }}>
-        <h3>Authentication Complete ✓</h3>
-        <p>Phase 2 implementation is working!</p>
-        <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#666' }}>
-          Next up: Project management features
-        </p>
-      </div>
-      <div style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#999' }}>
-        <p>
-          <strong>API Status:</strong> Connected to{' '}
-          <a
-            href={process.env.REACT_APP_API_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#667eea' }}
-          >
-            {process.env.REACT_APP_API_URL}
-          </a>
-        </p>
-      </div>
     </div>
   );
 }
