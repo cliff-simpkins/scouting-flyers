@@ -170,14 +170,20 @@ async def import_kml(
         except Exception as e:
             errors.append(f"Failed to create zone '{zone_data['name']}': {str(e)}")
 
+    # Commit if we created any zones
     if created_zones:
         db.commit()
     else:
+        # No zones created - this is OK if user skipped all duplicates
+        # Only raise error if there were actual parsing/processing errors
+        if errors:
+            db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Failed to import zones. Errors: {'; '.join(errors)}"
+            )
+        # User skipped all zones - this is a valid operation
         db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"No zones created. Errors: {'; '.join(errors)}"
-        )
 
     # Convert zones to response format
     result_zones = []
