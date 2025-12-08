@@ -106,6 +106,13 @@ const ZoneImportModal: React.FC<ZoneImportModalProps> = ({
   };
 
   const handleDuplicateAction = async (action: DuplicateAction) => {
+    console.log('=== handleDuplicateAction START ===');
+    console.log('Action received:', action);
+    console.log('Current duplicate:', currentDuplicate?.name);
+    console.log('Pending duplicates:', pendingDuplicates.map(d => d.name));
+    console.log('Current zonesToSkip state:', zonesToSkip);
+    console.log('==================================');
+
     if (!currentDuplicate) return;
 
     let newSkipList = [...zonesToSkip];
@@ -168,14 +175,29 @@ const ZoneImportModal: React.FC<ZoneImportModalProps> = ({
         }
       }
 
+      console.log('=== IMPORT DEBUG INFO ===');
+      console.log('Action:', action);
+      console.log('shouldProcessAll:', shouldProcessAll);
+      console.log('shouldSkipAll:', shouldSkipAll);
+      console.log('Current duplicate:', currentDuplicate?.name);
+      console.log('Remaining duplicates:', remainingDuplicates.map(d => d.name));
       console.log('Final zones to skip:', newSkipList);
+      console.log('Skip list length:', newSkipList.length);
+      console.log('========================');
+
       // Import all zones except those in skip list
       await performImport(kmlContent!, newSkipList);
     }
   };
 
   const performImport = async (fileContent: string, zonesToSkip: string[] = []) => {
-    console.log('performImport called with zonesToSkip:', zonesToSkip);
+    console.log('=== performImport CALLED ===');
+    console.log('zonesToSkip:', zonesToSkip);
+    console.log('zonesToSkip type:', typeof zonesToSkip);
+    console.log('zonesToSkip is Array:', Array.isArray(zonesToSkip));
+    console.log('zonesToSkip length:', zonesToSkip.length);
+    console.log('===========================');
+
     try {
       const response = await zoneService.importKML(projectId, fileContent, zonesToSkip);
 

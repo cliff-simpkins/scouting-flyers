@@ -70,13 +70,21 @@ const zoneService = {
    */
   async importKML(projectId: string, kmlContent: string, zonesToSkip: string[] = []): Promise<KMLImportResponse> {
     const token = localStorage.getItem('access_token');
+
+    const payload = {
+      project_id: projectId,
+      kml_content: kmlContent,
+      zones_to_skip: zonesToSkip,
+    };
+
+    console.log('=== zoneService.importKML ===');
+    console.log('Payload zones_to_skip:', payload.zones_to_skip);
+    console.log('Payload zones_to_skip length:', payload.zones_to_skip.length);
+    console.log('============================');
+
     const response = await axios.post(
       `${API_V1}/zones/import-kml`,
-      {
-        project_id: projectId,
-        kml_content: kmlContent,
-        zones_to_skip: zonesToSkip,
-      },
+      payload,
       {
         headers: {
           Authorization: `Bearer ${token}`,

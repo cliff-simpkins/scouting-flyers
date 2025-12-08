@@ -132,14 +132,21 @@ async def import_kml(
     created_zones = []
     zones_to_skip = request.zones_to_skip or []
 
+    # Convert skip list to lowercase for case-insensitive comparison
+    zones_to_skip_lower = [name.lower() for name in zones_to_skip]
+
     print(f"DEBUG: Received zones_to_skip: {zones_to_skip}")
+    print(f"DEBUG: zones_to_skip_lower: {zones_to_skip_lower}")
     print(f"DEBUG: Zone names from KML: {[z['name'] for z in zones_data]}")
+    print(f"DEBUG: Skip list length: {len(zones_to_skip)}, Zones in KML: {len(zones_data)}")
 
     for zone_data in zones_data:
-        # Skip zones that user declined to import
-        if zone_data['name'] in zones_to_skip:
-            print(f"DEBUG: Skipping zone '{zone_data['name']}' (in skip list)")
+        # Skip zones that user declined to import (case-insensitive)
+        if zone_data['name'].lower() in zones_to_skip_lower:
+            print(f"DEBUG: ✓ SKIPPING zone '{zone_data['name']}' (found in skip list)")
             continue
+
+        print(f"DEBUG: → IMPORTING zone '{zone_data['name']}' (not in skip list)")
 
         try:
             # Convert GeoJSON to WKT for PostGIS
