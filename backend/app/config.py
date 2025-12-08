@@ -12,6 +12,14 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     API_V1_PREFIX: str = "/api/v1"
 
+    # Logging
+    LOG_LEVEL: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    LOG_TO_FILE: bool = True  # Write logs to files
+    LOG_TO_CONSOLE: bool = True  # Also output to console
+    LOG_DIR: str = "logs"  # Directory for log files
+    LOG_MAX_BYTES: int = 10485760  # 10MB per log file
+    LOG_BACKUP_COUNT: int = 5  # Keep 5 backup files
+
     # Database
     DATABASE_URL: str
 

@@ -1,11 +1,18 @@
 """Main FastAPI application"""
+import logging
 from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
+from app.utils.logging_config import setup_logging
+
+# Initialize logging
+setup_logging()
+logger = logging.getLogger(__name__)
 
 # Track server start time
 SERVER_START_TIME = datetime.utcnow()
+logger.info(f"Server starting at {SERVER_START_TIME.isoformat()}")
 
 # Create FastAPI application
 app = FastAPI(
