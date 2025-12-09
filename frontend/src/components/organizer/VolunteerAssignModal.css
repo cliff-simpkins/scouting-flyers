@@ -1,0 +1,75 @@
+/**
+ * Styles for VolunteerAssignModal component
+ */
+
+.volunteer-assign-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 400px;
+}
+
+.volunteer-assign-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.volunteer-assign-form__hint {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.volunteer-assign-form__loading {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.volunteer-assign-form__no-volunteers {
+  text-align: center;
+  padding: 2rem;
+}
+
+.volunteer-assign-form__no-volunteers p {
+  margin: 0.5rem 0;
+  color: #374151;
+}
+
+.volunteer-assign-form__no-volunteers .volunteer-assign-form__hint {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.volunteer-assign-form__error {
+  padding: 0.75rem 1rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+.volunteer-assign-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .volunteer-assign-form {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .volunteer-assign-form__actions {
+    flex-direction: column-reverse;
+  }
+
+  .volunteer-assign-form__actions button {
+    width: 100%;
+  }
+}

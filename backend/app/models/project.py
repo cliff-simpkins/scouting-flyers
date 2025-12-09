@@ -12,7 +12,7 @@ class CollaboratorRole(str, enum.Enum):
     """Collaborator role enum"""
     OWNER = "owner"
     ORGANIZER = "organizer"
-    VIEWER = "viewer"
+    PROJECT_VIEWER = "project_viewer"
 
 
 class Project(Base):
@@ -42,7 +42,7 @@ class ProjectCollaborator(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    role = Column(Enum(CollaboratorRole, values_callable=lambda x: [e.value for e in x]), nullable=False, default=CollaboratorRole.VIEWER)
+    role = Column(Enum(CollaboratorRole, values_callable=lambda x: [e.value for e in x]), nullable=False, default=CollaboratorRole.PROJECT_VIEWER)
     invited_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     invited_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 

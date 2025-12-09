@@ -24,6 +24,7 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_PREFIX}/openapi.json"
 )
 
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -71,15 +72,16 @@ async def server_info():
 
 
 # API v1 routers
-from app.routers import auth, projects, zones
+from app.routers import auth, projects, zones, assignments, completions
 
 app.include_router(auth.router, prefix=settings.API_V1_PREFIX, tags=["auth"])
 app.include_router(projects.router, prefix=settings.API_V1_PREFIX)
 app.include_router(zones.router, prefix=settings.API_V1_PREFIX)
+app.include_router(assignments.router, prefix=settings.API_V1_PREFIX)
+app.include_router(completions.router, prefix=settings.API_V1_PREFIX)
 
 # To be added:
-# from app.routers import assignments, houses
-# app.include_router(assignments.router, prefix=settings.API_V1_PREFIX, tags=["assignments"])
+# from app.routers import houses
 # app.include_router(houses.router, prefix=settings.API_V1_PREFIX, tags=["houses"])
 
 

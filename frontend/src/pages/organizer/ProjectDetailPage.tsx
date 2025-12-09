@@ -10,9 +10,11 @@ import ProjectFormModal from '../../components/organizer/ProjectFormModal';
 import CollaboratorInviteModal from '../../components/organizer/CollaboratorInviteModal';
 import ZoneImportModal from '../../components/organizer/ZoneImportModal';
 import ZoneMap from '../../components/organizer/ZoneMap';
+import ZoneItem from '../../components/organizer/ZoneItem';
 import projectService from '../../services/projectService';
-import zoneService, { Zone } from '../../services/zoneService';
-import { ProjectWithCollaborators, CollaboratorRole } from '../../types';
+import zoneService from '../../services/zoneService';
+import zoneAssignmentService from '../../services/zoneAssignmentService';
+import { ProjectWithCollaborators, CollaboratorRole, ZoneWithAssignments } from '../../types';
 import './ProjectDetailPage.css';
 
 const ProjectDetailPage: React.FC = () => {
@@ -20,7 +22,7 @@ const ProjectDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [project, setProject] = useState<ProjectWithCollaborators | null>(null);
-  const [zones, setZones] = useState<Zone[]>([]);
+  const [zones, setZones] = useState<ZoneWithAssignments[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingZones, setLoadingZones] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,9 +50,20 @@ const ProjectDetailPage: React.FC = () => {
 
     try {
       setLoadingZones(true);
-      const data = await zoneService.getProjectZones(id);
+      // Fetch zones and assignments in parallel
+      const [zonesData, assignmentsData] = await Promise.all([
+        zoneService.getProjectZones(id),
+        zoneAssignmentService.getProjectAssignments(id).catch(() => []) // Fallback to empty array if fails
+      ]);
+
+      // Merge assignments into zones
+      const zonesWithAssignments = zonesData.map(zone => ({
+        ...zone,
+        assignments: assignmentsData.filter(a => a.zone_id === zone.id)
+      })) as ZoneWithAssignments[];
+
       // Sort zones alphabetically by name
-      const sortedZones = data.sort((a, b) => a.name.localeCompare(b.name));
+      const sortedZones = zonesWithAssignments.sort((a, b) => a.name.localeCompare(b.name));
       setZones(sortedZones);
     } catch (err: any) {
       console.error('Failed to load zones:', err);
@@ -269,31 +282,14 @@ const ProjectDetailPage: React.FC = () => {
             <ZoneMap zones={zones} />
             <div className="project-detail-page__zone-list">
               {zones.map((zone) => (
-                <div key={zone.id} className="zone-item">
-                  <div className="zone-item__info">
-                    <div className="zone-item__name">{zone.name}</div>
-                    {zone.description && (
-                      <div className="zone-item__description">{zone.description}</div>
-                    )}
-                  </div>
-                  <div className="zone-item__actions">
-                    {zone.color && (
-                      <div
-                        className="zone-item__color"
-                        style={{ backgroundColor: zone.color }}
-                      />
-                    )}
-                    {canEdit && (
-                      <button
-                        className="zone-item__delete-btn"
-                        onClick={() => handleDeleteZone(zone.id, zone.name)}
-                        title="Delete zone"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                </div>
+                <ZoneItem
+                  key={zone.id}
+                  zone={zone}
+                  canEdit={!!canEdit}
+                  projectId={id!}
+                  onDelete={handleDeleteZone}
+                  onAssignmentChange={loadZones}
+                />
               ))}
             </div>
           </div>

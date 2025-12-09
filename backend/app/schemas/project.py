@@ -38,13 +38,13 @@ class ProjectResponse(BaseModel):
 class CollaboratorBase(BaseModel):
     """Base schema for collaborator"""
     user_id: UUID
-    role: CollaboratorRole = CollaboratorRole.VIEWER
+    role: CollaboratorRole = CollaboratorRole.PROJECT_VIEWER
 
 
 class CollaboratorInvite(BaseModel):
     """Schema for inviting a collaborator"""
     email: str = Field(..., description="Email of user to invite")
-    role: CollaboratorRole = Field(CollaboratorRole.VIEWER, description="Role to assign")
+    role: CollaboratorRole = Field(CollaboratorRole.PROJECT_VIEWER, description="Role to assign")
 
 
 class CollaboratorResponse(BaseModel):

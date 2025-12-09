@@ -27,7 +27,7 @@ export interface LoginResponse {
 export enum CollaboratorRole {
   OWNER = 'owner',
   ORGANIZER = 'organizer',
-  VIEWER = 'viewer'
+  PROJECT_VIEWER = 'project_viewer'
 }
 
 // Project interfaces
@@ -71,4 +71,58 @@ export interface ProjectUpdateRequest {
 export interface CollaboratorInviteRequest {
   email: string;
   role: CollaboratorRole;
+}
+
+// Zone interfaces
+export interface Zone {
+  id: string;
+  project_id: string;
+  name: string;
+  description?: string | null;
+  geometry: GeoJSON.Geometry;
+  color?: string | null;
+  kml_metadata?: any;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Zone Assignment interfaces
+export interface ZoneAssignment {
+  id: string;
+  zone_id: string;
+  volunteer_id: string;
+  assigned_by: string;
+  assigned_at: string;
+  status: 'assigned' | 'in_progress' | 'completed';
+  started_at?: string | null;
+  completed_at?: string | null;
+  volunteer_name?: string;
+  volunteer_email?: string;
+  volunteer_picture_url?: string | null;
+}
+
+export interface ZoneWithAssignments extends Zone {
+  assignments?: ZoneAssignment[];
+}
+
+export interface ZoneAssignmentWithZone extends ZoneAssignment {
+  zone_name: string;
+  zone_color: string | null;
+  project_id: string;
+  project_name: string;
+  zone_geometry: GeoJSON.Geometry;
+}
+
+// Zone Assignment Request types
+export interface ZoneAssignmentCreateRequest {
+  zone_id: string;
+  volunteer_id: string;
+}
+
+export interface VolunteerInfo {
+  id: string;
+  name: string;
+  email: string;
+  picture_url?: string | null;
+  current_assignments_count: number;
 }

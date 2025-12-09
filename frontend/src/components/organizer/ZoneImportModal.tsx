@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
 import zoneService from '../../services/zoneService';
-import { Zone } from '../../services/zoneService';
+import { Zone, ZoneWithAssignments } from '../../types';
 import DuplicateZoneModal, { DuplicateAction } from './DuplicateZoneModal';
 import './ZoneImportModal.css';
 
@@ -14,7 +14,7 @@ interface ZoneImportModalProps {
   onClose: () => void;
   onSuccess: () => void;
   projectId: string;
-  existingZones: Zone[];
+  existingZones: (Zone | ZoneWithAssignments)[];
 }
 
 const ZoneImportModal: React.FC<ZoneImportModalProps> = ({

@@ -48,6 +48,7 @@ class ZoneAssignment(Base):
     zone = relationship("Zone", back_populates="assignments")
     volunteer = relationship("User", foreign_keys=[volunteer_id])
     assigner = relationship("User", foreign_keys=[assigned_by])
+    completion_areas = relationship("CompletionArea", back_populates="assignment", cascade="all, delete-orphan")
 
 
 class House(Base):

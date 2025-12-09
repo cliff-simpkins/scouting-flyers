@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import OAuthCallback from './pages/OAuthCallback';
 import ProjectListPage from './pages/organizer/ProjectListPage';
 import ProjectDetailPage from './pages/organizer/ProjectDetailPage';
+import VolunteerMapPage from './pages/volunteer/VolunteerMapPage';
 import Footer from './components/common/Footer';
 import './App.css';
 
@@ -22,6 +23,7 @@ function App() {
             <Route index element={<Navigate to="/projects" replace />} />
             <Route path="projects" element={<ProjectListPage />} />
             <Route path="projects/:id" element={<ProjectDetailPage />} />
+            <Route path="volunteer/zones" element={<VolunteerMapPage />} />
           </Route>
         </Routes>
         {showFooter && <Footer />}

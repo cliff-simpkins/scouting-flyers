@@ -24,7 +24,7 @@ const CollaboratorInviteModal: React.FC<CollaboratorInviteModalProps> = ({
   projectId,
 }) => {
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState<CollaboratorRole>(CollaboratorRole.VIEWER);
+  const [role, setRole] = useState<CollaboratorRole>(CollaboratorRole.PROJECT_VIEWER);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errorDetails, setErrorDetails] = useState<any>(null);
@@ -34,7 +34,7 @@ const CollaboratorInviteModal: React.FC<CollaboratorInviteModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setEmail('');
-      setRole(CollaboratorRole.VIEWER);
+      setRole(CollaboratorRole.PROJECT_VIEWER);
       setError(null);
       setErrorDetails(null);
       setShowErrorDetails(false);
@@ -116,7 +116,7 @@ const CollaboratorInviteModal: React.FC<CollaboratorInviteModalProps> = ({
   };
 
   const roleOptions = [
-    { value: CollaboratorRole.VIEWER, label: 'Viewer' },
+    { value: CollaboratorRole.PROJECT_VIEWER, label: 'Project Viewer' },
     { value: CollaboratorRole.ORGANIZER, label: 'Organizer' },
   ];
 

@@ -2,21 +2,10 @@
  * Zone service for API calls
  */
 import axios from 'axios';
+import { Zone } from '../types';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 const API_V1 = `${API_URL}/api/v1`;
-
-interface Zone {
-  id: string;
-  project_id: string;
-  name: string;
-  description?: string;
-  geometry: any; // GeoJSON geometry
-  color?: string;
-  metadata?: any;
-  created_at: string;
-  updated_at: string;
-}
 
 interface KMLImportResponse {
   zones_created: number;

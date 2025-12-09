@@ -1,0 +1,432 @@
+/**
+ * Styles for ZoneItem component
+ */
+
+.zone-item {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.zone-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.zone-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.zone-item__header:hover {
+  background-color: #f9fafb;
+}
+
+.zone-item__header:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+.zone-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.zone-item__name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+
+.zone-item__name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.zone-item__volunteer-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: #dbeafe;
+  color: #1e40af;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.zone-item__description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.zone-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.zone-item__color {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.zone-item__map-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #dcfce7 !important;
+  color: #16a34a;
+  font-size: 1.5rem;
+  line-height: 1;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+.zone-item__map-btn:hover {
+  background: #bbf7d0 !important;
+  color: #15803d;
+}
+
+.zone-item__map-btn:active {
+  transform: scale(0.95);
+}
+
+.zone-item__map-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.zone-item__delete-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #fef2f2 !important;
+  color: #dc2626;
+  font-size: 1.5rem;
+  line-height: 1;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+.zone-item__delete-btn:hover {
+  background: #fee2e2 !important;
+  color: #b91c1c;
+}
+
+.zone-item__delete-btn:active {
+  transform: scale(0.95);
+}
+
+.zone-item__delete-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Volunteers Section */
+.zone-item__volunteers {
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  padding: 1rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.zone-item__no-volunteers {
+  text-align: center;
+  padding: 1.5rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Volunteer List */
+.volunteer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.volunteer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.volunteer-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.volunteer-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.volunteer-item__name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.volunteer-item__email {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.volunteer-item__date {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.volunteer-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.status-badge--assigned {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.status-badge--in-progress {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-badge--completed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.volunteer-item__remove-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.volunteer-item__remove-btn:hover:not(:disabled) {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.volunteer-item__remove-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.volunteer-item__remove-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Add Volunteer Button */
+.zone-item__add-volunteer-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px dashed #d1d5db;
+  background: white;
+  color: #3b82f6;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.zone-item__add-volunteer-btn:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.zone-item__add-volunteer-btn:active {
+  transform: scale(0.98);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .zone-item__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .zone-item__actions {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+
+  .volunteer-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .volunteer-item__actions {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .zone-item__name-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+/* Zone Map Modal */
+.zone-map-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+}
+
+.zone-map-modal__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.zone-map-modal__content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.zone-map-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.zone-map-modal__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.zone-map-modal__close-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.zone-map-modal__close-btn:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.zone-map-modal__close-btn:active {
+  transform: scale(0.95);
+}
+
+.zone-map-modal__map {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.zone-map-modal__map .zone-map {
+  height: 100%;
+  flex: 1;
+  border: none;
+  border-radius: 0;
+}
+
+.zone-map-modal__map .zone-map__container {
+  flex: 1;
+  height: auto;
+}
