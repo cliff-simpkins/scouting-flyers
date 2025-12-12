@@ -1,0 +1,92 @@
+groups:
+  - name: flyers_alerts
+    interval: 30s
+    rules:
+      # Application is down
+      - alert: ApplicationDown
+        expr: up{job="flyers-backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Flyers backend application is down"
+          description: "The flyers-backend has been down for more than 2 minutes."
+
+      # High error rate
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP error rate detected"
+          description: "Error rate is {{ $value }} errors per second."
+
+      # Database connectivity issues
+      - alert: DatabaseConnectionFailed
+        expr: flyers_database_connected == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection failed"
+          description: "Cannot connect to the database for more than 1 minute."
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (container_memory_usage_bytes{name="flyers-backend"} / container_spec_memory_limit_bytes{name="flyers-backend"}) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container memory usage is high"
+          description: "Memory usage is above 90% for more than 5 minutes."
+
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total{name="flyers-backend"}[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container CPU usage is high"
+          description: "CPU usage is above 80% for more than 10 minutes."
+
+      # Slow response times
+      - alert: SlowResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "95th percentile response time is slow"
+          description: "95% of requests are taking more than 1 second."
+
+      # Application restart
+      - alert: ApplicationRestarted
+        expr: changes(flyers_uptime_seconds[5m]) > 0
+        labels:
+          severity: info
+        annotations:
+          summary: "Application has been restarted"
+          description: "The flyers application was restarted in the last 5 minutes."
+
+      # High number of active assignments
+      - alert: HighActiveAssignments
+        expr: flyers_assignments_by_status{status="in_progress"} > 100
+        for: 1h
+        labels:
+          severity: info
+        annotations:
+          summary: "High number of in-progress assignments"
+          description: "There are {{ $value }} assignments currently in progress."
+
+      # No recent project activity
+      - alert: NoRecentProjectActivity
+        expr: rate(flyers_projects_total[24h]) == 0
+        for: 7d
+        labels:
+          severity: info
+        annotations:
+          summary: "No new projects created recently"
+          description: "No new projects have been created in the last 7 days."

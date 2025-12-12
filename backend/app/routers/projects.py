@@ -106,7 +106,33 @@ async def list_projects(
     # Combine and deduplicate
     all_projects = list({p.id: p for p in owned_projects + collab_projects}.values())
 
-    return all_projects
+    # Enrich with user_role
+    enriched_projects = []
+    for project in all_projects:
+        # Determine user's role
+        if project.owner_id == current_user.id:
+            user_role = CollaboratorRole.OWNER
+        else:
+            collab = db.query(ProjectCollaborator).filter(
+                ProjectCollaborator.project_id == project.id,
+                ProjectCollaborator.user_id == current_user.id
+            ).first()
+            user_role = collab.role if collab else None
+
+        project_dict = {
+            "id": project.id,
+            "name": project.name,
+            "description": project.description,
+            "owner_id": project.owner_id,
+            "is_active": project.is_active,
+            "status": project.status,
+            "created_at": project.created_at,
+            "updated_at": project.updated_at,
+            "user_role": user_role
+        }
+        enriched_projects.append(project_dict)
+
+    return enriched_projects
 
 
 @router.post("", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
@@ -165,6 +191,7 @@ async def get_project(
         "description": project.description,
         "owner_id": project.owner_id,
         "is_active": project.is_active,
+        "status": project.status,
         "created_at": project.created_at,
         "updated_at": project.updated_at,
         "collaborators": enriched_collaborators

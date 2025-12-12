@@ -9,9 +9,14 @@
   color: white;
   padding: 1.5rem 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem;
   align-items: center;
+}
+
+.App-header > div:last-child {
+  justify-self: end;
 }
 
 .App-header h1 {
@@ -36,6 +41,16 @@ main {
 @media (max-width: 768px) {
   .App-header {
     padding: 1rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .App-header > div:last-child {
+    justify-self: start;
+  }
+
+  .App-header nav {
+    order: 2;
   }
 
   .App-header h1 {

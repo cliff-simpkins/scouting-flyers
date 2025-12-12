@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 from uuid import UUID
-from app.models.project import CollaboratorRole
+from app.models.project import CollaboratorRole, ProjectStatus
 
 
 # Project schemas
@@ -18,6 +18,7 @@ class ProjectUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255, description="Project name")
     description: Optional[str] = Field(None, description="Project description")
     is_active: Optional[bool] = Field(None, description="Whether project is active")
+    status: Optional[ProjectStatus] = Field(None, description="Project workflow status")
 
 
 class ProjectResponse(BaseModel):
@@ -27,8 +28,10 @@ class ProjectResponse(BaseModel):
     description: Optional[str]
     owner_id: UUID
     is_active: bool
+    status: ProjectStatus
     created_at: datetime
     updated_at: datetime
+    user_role: Optional[CollaboratorRole] = None
 
     class Config:
         from_attributes = True

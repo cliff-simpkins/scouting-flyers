@@ -98,15 +98,44 @@ export const getVolunteerAssignments = async (): Promise<ZoneAssignmentWithZone[
 /**
  * Update assignment status (volunteer only)
  * @param assignmentId - The assignment ID
- * @param status - New status ('in_progress' or 'completed')
+ * @param status - New status ('assigned', 'in_progress', or 'completed')
  */
 export const updateAssignmentStatus = async (
   assignmentId: string,
-  status: 'in_progress' | 'completed'
+  status: 'assigned' | 'in_progress' | 'completed'
 ): Promise<ZoneAssignment> => {
   const response = await axios.patch(
     `${API_BASE_URL}/api/v1/assignments/my-assignments/${assignmentId}/status`,
     { status },
+    { headers: getAuthHeader() }
+  );
+  return response.data;
+};
+
+/**
+ * Get specific assignment details for current user (volunteer)
+ * @param assignmentId - The assignment ID
+ */
+export const getAssignmentDetail = async (assignmentId: string): Promise<ZoneAssignmentWithZone> => {
+  const response = await axios.get(
+    `${API_BASE_URL}/api/v1/assignments/my-assignments/${assignmentId}`,
+    { headers: getAuthHeader() }
+  );
+  return response.data;
+};
+
+/**
+ * Update assignment notes and manual completion percentage (volunteer only)
+ * @param assignmentId - The assignment ID
+ * @param data - Object containing optional notes and manual_completion_percentage
+ */
+export const updateAssignment = async (
+  assignmentId: string,
+  data: { notes?: string; manual_completion_percentage?: number }
+): Promise<ZoneAssignmentWithZone> => {
+  const response = await axios.patch(
+    `${API_BASE_URL}/api/v1/assignments/my-assignments/${assignmentId}`,
+    data,
     { headers: getAuthHeader() }
   );
   return response.data;
@@ -119,5 +148,7 @@ export default {
   removeAssignment,
   getAvailableVolunteers,
   getVolunteerAssignments,
-  updateAssignmentStatus
+  updateAssignmentStatus,
+  getAssignmentDetail,
+  updateAssignment
 };

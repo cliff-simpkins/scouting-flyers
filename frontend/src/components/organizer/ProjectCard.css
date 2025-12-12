@@ -31,19 +31,34 @@
   text-transform: uppercase;
 }
 
-.project-card__badge--owner {
-  background-color: #ffc107;
-  color: #333;
+.project-card__badge--role-owner {
+  background: #fce7f3;
+  color: #9f1239;
 }
 
-.project-card__badge--active {
-  background-color: #28a745;
-  color: white;
+.project-card__badge--role-organizer {
+  background: #ddd6fe;
+  color: #5b21b6;
 }
 
-.project-card__badge--inactive {
-  background-color: #6c757d;
-  color: white;
+.project-card__badge--role-project_viewer {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.project-card__badge--status-in_progress {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.project-card__badge--status-completed {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.project-card__badge--status-archived {
+  background: #f3f4f6;
+  color: #6b7280;
 }
 
 .project-card__body {

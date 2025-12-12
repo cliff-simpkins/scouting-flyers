@@ -91,6 +91,15 @@ const ProjectDetailPage: React.FC = () => {
       (userCollaborator.role === CollaboratorRole.ORGANIZER ||
         userCollaborator.role === CollaboratorRole.OWNER));
 
+  const formatRoleName = (role: CollaboratorRole): string => {
+    const roleMap: Record<CollaboratorRole, string> = {
+      [CollaboratorRole.OWNER]: 'Owner',
+      [CollaboratorRole.ORGANIZER]: 'Organizer',
+      [CollaboratorRole.PROJECT_VIEWER]: 'Project Viewer',
+    };
+    return roleMap[role] || role;
+  };
+
   const handleRemoveCollaborator = async (userId: string) => {
     if (!id || !window.confirm('Are you sure you want to remove this collaborator?')) {
       return;
@@ -228,7 +237,7 @@ const ProjectDetailPage: React.FC = () => {
                   <span
                     className={`collaborator-item__role-badge collaborator-item__role-badge--${collaborator.role}`}
                   >
-                    {collaborator.role}
+                    {formatRoleName(collaborator.role)}
                   </span>
                   {canEdit && collaborator.user_id !== project.owner_id && (
                     <Button

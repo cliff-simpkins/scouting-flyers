@@ -50,13 +50,15 @@ cd scouting-flyers
 
 ### 2. Setup Database
 
-Run the initialization scripts in `database/init-scripts/` on your PostgreSQL server (192.168.1.11:2775):
+Run the initialization scripts in `database/init-scripts/` on your PostgreSQL server:
 
 ```bash
-psql -h 192.168.1.11 -p 2775 -U postgres -f database/init-scripts/01-create-database.sql
-psql -h 192.168.1.11 -p 2775 -U postgres -d flyers_db -f database/init-scripts/02-enable-postgis.sql
-psql -h 192.168.1.11 -p 2775 -U flyers_user -d flyers_db -f database/init-scripts/03-schema.sql
+psql -h YOUR_DB_HOST -p YOUR_DB_PORT -U postgres -f database/init-scripts/01-create-database.sql
+psql -h YOUR_DB_HOST -p YOUR_DB_PORT -U postgres -d flyers_db -f database/init-scripts/02-enable-postgis.sql
+psql -h YOUR_DB_HOST -p YOUR_DB_PORT -U flyers_user -d flyers_db -f database/init-scripts/03-schema.sql
 ```
+
+Then run migrations (see Database Migrations section below).
 
 ### 3. Configure Google OAuth
 
@@ -66,7 +68,7 @@ Follow the guide in `docs/GOOGLE_OAUTH_SETUP.md` to create OAuth credentials.
 
 **Backend** (`backend/.env`):
 ```env
-DATABASE_URL=postgresql://flyers_user:YOUR_PASSWORD@192.168.1.11:2775/flyers_db
+DATABASE_URL=postgresql://flyers_user:YOUR_PASSWORD@YOUR_DB_HOST:YOUR_DB_PORT/flyers_db
 GOOGLE_CLIENT_ID=your_client_id
 GOOGLE_CLIENT_SECRET=your_client_secret
 JWT_SECRET=your_random_secret_key
@@ -75,6 +77,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES=15
 REFRESH_TOKEN_EXPIRE_DAYS=7
 CORS_ORIGINS=http://localhost:3000
 ```
+
+See `backend/.env.example` for all available configuration options.
 
 **Frontend** (`frontend/.env`):
 ```env
@@ -132,11 +136,27 @@ See `dev-tools/README.md` for more information.
 
 ### Database Migrations
 
+Run migrations from the backend directory:
+
 ```bash
 cd backend
-alembic revision --autogenerate -m "Description"
-alembic upgrade head
+python run_migration.py <migration-file>.sql
 ```
+
+Example:
+```bash
+python run_migration.py 07-add-project-status-enum.sql
+```
+
+**Migrations must be run in order:**
+1. `01-add-password-auth.sql`
+2. `02-add-viewer-role.sql`
+3. `03-rename-metadata-columns.sql`
+4. `04-add-completion-tracking.sql`
+5. `05-grant-completion-permissions.sql`
+6. `06-add-assignment-notes-and-percentage.sql`
+7. `07-add-project-status-enum.sql`
+8. `08-add-assignment-notes-table.sql`
 
 ### Running Tests
 

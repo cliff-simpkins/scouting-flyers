@@ -15,6 +15,13 @@ class CollaboratorRole(str, enum.Enum):
     PROJECT_VIEWER = "project_viewer"
 
 
+class ProjectStatus(str, enum.Enum):
+    """Project status enum"""
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    ARCHIVED = "archived"
+
+
 class Project(Base):
     """Project model for managing flyer distribution projects"""
 
@@ -25,6 +32,7 @@ class Project(Base):
     description = Column(String, nullable=True)
     owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
+    status = Column(Enum(ProjectStatus, values_callable=lambda x: [e.value for e in x]), nullable=False, default=ProjectStatus.IN_PROGRESS)
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 

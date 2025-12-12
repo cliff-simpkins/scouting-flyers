@@ -14,18 +14,18 @@ interface ZoneMapProps {
   onZoneClick?: (zone: Zone | ZoneWithAssignments) => void;
 }
 
-// Component to handle map resize
-const MapResizeHandler: React.FC<{ isMaximized: boolean }> = ({ isMaximized }) => {
+// Component to resize map when container changes
+const MapResizeHandler: React.FC = () => {
   const map = useMap();
 
   useEffect(() => {
-    // Give the CSS transition time to complete, then invalidate map size
+    // Invalidate size to force map to recalculate dimensions
     const timer = setTimeout(() => {
       map.invalidateSize();
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [isMaximized, map]);
+  }, [map]);
 
   return null;
 };
@@ -59,8 +59,8 @@ const FitBounds: React.FC<{ zones: (Zone | ZoneWithAssignments)[] }> = ({ zones 
 };
 
 const ZoneMap: React.FC<ZoneMapProps> = ({ zones, onZoneClick }) => {
-  const [isMaximized, setIsMaximized] = useState(false);
   const [mapLayer, setMapLayer] = useState<'toner' | 'humanitarian'>('humanitarian');
+  const [isMaximized, setIsMaximized] = useState(false);
 
   // Default center (if no zones)
   const defaultCenter: [number, number] = [51.505, -0.09];
@@ -82,7 +82,7 @@ const ZoneMap: React.FC<ZoneMapProps> = ({ zones, onZoneClick }) => {
       <button
         className="zone-map__maximize-btn"
         onClick={() => setIsMaximized(!isMaximized)}
-        title={isMaximized ? 'Restore map' : 'Maximize map'}
+        title={isMaximized ? 'Restore map size' : 'Maximize map'}
       >
         {isMaximized ? (
           <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
@@ -154,29 +154,22 @@ const ZoneMap: React.FC<ZoneMapProps> = ({ zones, onZoneClick }) => {
 
         {/* Fit bounds to zones */}
         <FitBounds zones={zones} />
-
-        {/* Handle map resize when maximizing/restoring */}
-        <MapResizeHandler isMaximized={isMaximized} />
+        {/* Resize map when maximized/restored */}
+        <MapResizeHandler />
       </MapContainer>
     </>
   );
 
-  // When maximized, use a portal to render directly into body
+  // Render maximized view in portal
   if (isMaximized) {
-    return (
-      <>
-        <div className="zone-map" />
-        {ReactDOM.createPortal(
-          <div className="zone-map zone-map--maximized">
-            {mapContent}
-          </div>,
-          document.body
-        )}
-      </>
+    return ReactDOM.createPortal(
+      <div className="zone-map zone-map--maximized">
+        {mapContent}
+      </div>,
+      document.body
     );
   }
 
-  // Normal rendering
   return <div className="zone-map">{mapContent}</div>;
 };
 

@@ -14,6 +14,7 @@ interface VolunteerZoneMapProps {
   zones: Zone[];
   assignmentId?: string; // Optional: if provided, enables completion tracking
   onZoneClick?: (zone: Zone) => void;
+  readOnly?: boolean; // Optional: if true, disables marking controls
 }
 
 // Component to handle click events for marking/unmarking completion
@@ -111,7 +112,7 @@ const userLocationIcon = new Icon({
   popupAnchor: [0, -12],
 });
 
-const VolunteerZoneMap: React.FC<VolunteerZoneMapProps> = ({ zones, assignmentId, onZoneClick }) => {
+const VolunteerZoneMap: React.FC<VolunteerZoneMapProps> = ({ zones, assignmentId, onZoneClick, readOnly = false }) => {
   const [isMaximized, setIsMaximized] = useState(false);
   const [mapLayer, setMapLayer] = useState<'toner' | 'humanitarian'>('humanitarian');
   const [userLocation, setUserLocation] = useState<LatLng | null>(null);
@@ -265,7 +266,7 @@ const VolunteerZoneMap: React.FC<VolunteerZoneMapProps> = ({ zones, assignmentId
         <span className="volunteer-zone-map__layer-label">{mapLayer === 'toner' ? 'B&W' : 'Color'}</span>
       </button>
 
-      {assignmentId && (
+      {assignmentId && !readOnly && (
         <button
           className={`volunteer-zone-map__mark-btn ${markingMode !== 'none' ? 'volunteer-zone-map__mark-btn--active' : ''} ${markingMode === 'unmarking' ? 'volunteer-zone-map__mark-btn--unmark' : ''}`}
           onClick={() => {
@@ -304,6 +305,17 @@ const VolunteerZoneMap: React.FC<VolunteerZoneMapProps> = ({ zones, assignmentId
             {markingMode === 'none' ? 'Mark' : markingMode === 'marking' ? 'Unmark' : 'Stop'}
           </span>
         </button>
+      )}
+
+      {readOnly && (
+        <div className="volunteer-zone-map__readonly-banner">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          View Only - Zone Completed
+        </div>
       )}
 
       <button
@@ -455,7 +467,7 @@ const VolunteerZoneMap: React.FC<VolunteerZoneMapProps> = ({ zones, assignmentId
         })}
 
         {/* Handle click events for marking/unmarking */}
-        {assignmentId && (
+        {assignmentId && !readOnly && (
           <CompletionMarker
             markingMode={markingMode}
             onMark={handleMarkArea}

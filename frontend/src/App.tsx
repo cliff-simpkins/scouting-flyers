@@ -1,11 +1,13 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import OAuthCallback from './pages/OAuthCallback';
+import DashboardPage from './pages/DashboardPage';
 import ProjectListPage from './pages/organizer/ProjectListPage';
 import ProjectDetailPage from './pages/organizer/ProjectDetailPage';
 import VolunteerMapPage from './pages/volunteer/VolunteerMapPage';
+import ZoneDetailPage from './pages/volunteer/ZoneDetailPage';
 import Footer from './components/common/Footer';
 import './App.css';
 
@@ -20,10 +22,12 @@ function App() {
           <Route path="/auth/callback" element={<OAuthCallback />} />
 
           <Route path="/" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/projects" replace />} />
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route path="dashboard" element={<DashboardPage />} />
             <Route path="projects" element={<ProjectListPage />} />
             <Route path="projects/:id" element={<ProjectDetailPage />} />
             <Route path="volunteer/zones" element={<VolunteerMapPage />} />
+            <Route path="volunteer/zones/:assignmentId" element={<ZoneDetailPage />} />
           </Route>
         </Routes>
         {showFooter && <Footer />}
@@ -51,6 +55,17 @@ function DashboardLayout() {
           <h1>Volunteer Flyer Distribution</h1>
           <p>Management System</p>
         </div>
+        <nav style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          <Link to="/dashboard" style={{ color: 'white', textDecoration: 'none', fontSize: '0.95rem', fontWeight: '500' }}>
+            Dashboard
+          </Link>
+          <Link to="/projects" style={{ color: 'white', textDecoration: 'none', fontSize: '0.95rem', fontWeight: '500' }}>
+            Projects
+          </Link>
+          <Link to="/volunteer/zones" style={{ color: 'white', textDecoration: 'none', fontSize: '0.95rem', fontWeight: '500' }}>
+            My Zones
+          </Link>
+        </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {user && (
             <>

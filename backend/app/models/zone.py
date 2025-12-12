@@ -1,5 +1,5 @@
 """Zone model for database operations"""
-from sqlalchemy import Column, String, Text, DateTime, ForeignKey
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from geoalchemy2 import Geometry
@@ -43,12 +43,32 @@ class ZoneAssignment(Base):
     status = Column(String(50), default='assigned')  # assigned, in_progress, completed
     started_at = Column(DateTime(timezone=True))
     completed_at = Column(DateTime(timezone=True))
+    notes = Column(Text)  # Zone-level notes from volunteer
+    manual_completion_percentage = Column(Integer)  # Manual override for completion percentage (0-100)
 
     # Relationships
     zone = relationship("Zone", back_populates="assignments")
     volunteer = relationship("User", foreign_keys=[volunteer_id])
     assigner = relationship("User", foreign_keys=[assigned_by])
     completion_areas = relationship("CompletionArea", back_populates="assignment", cascade="all, delete-orphan")
+    notes_list = relationship("AssignmentNote", back_populates="assignment", cascade="all, delete-orphan", order_by="AssignmentNote.created_at.desc()")
+
+
+class AssignmentNote(Base):
+    """Assignment notes with user attribution and timestamps"""
+
+    __tablename__ = "assignment_notes"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    assignment_id = Column(UUID(as_uuid=True), ForeignKey("zone_assignments.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    assignment = relationship("ZoneAssignment", back_populates="notes_list")
+    author = relationship("User", foreign_keys=[user_id])
 
 
 class House(Base):

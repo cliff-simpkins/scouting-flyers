@@ -5,7 +5,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../common/Card';
 import Button from '../common/Button';
-import { Project } from '../../types';
+import { Project, ProjectStatus, CollaboratorRole } from '../../types';
 import './ProjectCard.css';
 
 interface ProjectCardProps {
@@ -23,6 +23,24 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const isOwner = project.owner_id === currentUserId;
+
+  const formatRoleName = (role: CollaboratorRole): string => {
+    const roleMap: Record<CollaboratorRole, string> = {
+      [CollaboratorRole.OWNER]: 'Owner',
+      [CollaboratorRole.ORGANIZER]: 'Organizer',
+      [CollaboratorRole.PROJECT_VIEWER]: 'Project Viewer',
+    };
+    return roleMap[role] || role;
+  };
+
+  const formatStatusName = (status: ProjectStatus): string => {
+    const statusMap: Record<ProjectStatus, string> = {
+      [ProjectStatus.IN_PROGRESS]: 'In Progress',
+      [ProjectStatus.COMPLETED]: 'Completed',
+      [ProjectStatus.ARCHIVED]: 'Archived',
+    };
+    return statusMap[status] || status;
+  };
 
   const handleCardClick = () => {
     navigate(`/projects/${project.id}`);
@@ -45,13 +63,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       <div className="project-card__header" onClick={handleCardClick}>
         <h3 className="project-card__name">{project.name}</h3>
         <div className="project-card__badges">
-          {isOwner && <span className="project-card__badge project-card__badge--owner">Owner</span>}
-          <span
-            className={`project-card__badge ${
-              project.is_active ? 'project-card__badge--active' : 'project-card__badge--inactive'
-            }`}
-          >
-            {project.is_active ? 'Active' : 'Inactive'}
+          {project.user_role && (
+            <span className={`project-card__badge project-card__badge--role-${project.user_role}`}>
+              {formatRoleName(project.user_role)}
+            </span>
+          )}
+          <span className={`project-card__badge project-card__badge--status-${project.status}`}>
+            {formatStatusName(project.status)}
           </span>
         </div>
       </div>

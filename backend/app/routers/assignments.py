@@ -9,12 +9,13 @@ import json
 
 from app.database import get_db
 from app.models import Zone, Project, User
-from app.models.zone import ZoneAssignment
+from app.models.zone import ZoneAssignment, AssignmentNote
 from app.models.project import CollaboratorRole, ProjectCollaborator
 from app.schemas.assignment import (
     AssignmentCreate,
     AssignmentUpdate,
     VolunteerStatusUpdate,
+    VolunteerAssignmentUpdate,
     AssignmentResponse,
     AssignmentWithVolunteer,
     AssignmentWithZone,
@@ -114,10 +115,11 @@ async def get_project_assignments(
         .filter(Zone.project_id == project_id)\
         .all()
 
-    # Enrich with volunteer details
+    # Enrich with volunteer details and notes count
     result = []
     for assignment in assignments:
         volunteer = db.query(User).filter(User.id == assignment.volunteer_id).first()
+        notes_count = db.query(AssignmentNote).filter(AssignmentNote.assignment_id == assignment.id).count()
         result.append({
             "id": assignment.id,
             "zone_id": assignment.zone_id,
@@ -129,7 +131,10 @@ async def get_project_assignments(
             "completed_at": assignment.completed_at,
             "volunteer_name": volunteer.name if volunteer else "Unknown",
             "volunteer_email": volunteer.email if volunteer else "",
-            "volunteer_picture_url": volunteer.picture_url if volunteer else None
+            "volunteer_picture_url": volunteer.picture_url if volunteer else None,
+            "manual_completion_percentage": assignment.manual_completion_percentage,
+            "notes": assignment.notes,
+            "notes_count": notes_count
         })
 
     return result
@@ -420,6 +425,8 @@ async def get_my_assignments(
             "status": assignment.status,
             "started_at": assignment.started_at,
             "completed_at": assignment.completed_at,
+            "notes": assignment.notes,
+            "manual_completion_percentage": assignment.manual_completion_percentage,
             "zone_name": zone.name,
             "zone_color": zone.color,
             "project_id": project.id,
@@ -447,6 +454,59 @@ async def get_my_assignment(
     # Get geometry as GeoJSON
     geometry_geojson = json.loads(db.scalar(zone.geometry.ST_AsGeoJSON()))
 
+    # Get other volunteers assigned to this zone
+    from app.models.zone import AssignmentNote
+    other_assignments = db.query(ZoneAssignment)\
+        .filter(
+            ZoneAssignment.zone_id == assignment.zone_id,
+            ZoneAssignment.id != assignment_id
+        )\
+        .all()
+
+    other_volunteers = []
+    for other_assign in other_assignments:
+        volunteer = db.query(User).filter(User.id == other_assign.volunteer_id).first()
+        other_volunteers.append({
+            "id": other_assign.id,
+            "zone_id": other_assign.zone_id,
+            "volunteer_id": other_assign.volunteer_id,
+            "assigned_by": other_assign.assigned_by,
+            "assigned_at": other_assign.assigned_at,
+            "status": other_assign.status,
+            "started_at": other_assign.started_at,
+            "completed_at": other_assign.completed_at,
+            "notes": other_assign.notes,
+            "manual_completion_percentage": other_assign.manual_completion_percentage,
+            "volunteer_name": volunteer.name if volunteer else "Unknown",
+            "volunteer_email": volunteer.email if volunteer else "",
+            "volunteer_picture_url": volunteer.picture_url if volunteer else None
+        })
+
+    # Get notes list
+    notes = db.query(AssignmentNote)\
+        .filter(AssignmentNote.assignment_id == assignment_id)\
+        .order_by(AssignmentNote.created_at.desc())\
+        .all()
+
+    notes_list = []
+    for note in notes:
+        author = db.query(User).filter(User.id == note.user_id).first()
+        notes_list.append({
+            "id": note.id,
+            "assignment_id": note.assignment_id,
+            "user_id": note.user_id,
+            "content": note.content,
+            "created_at": note.created_at,
+            "updated_at": note.updated_at,
+            "author_name": author.name if author else "Unknown",
+            "author_email": author.email if author else "",
+            "author_picture_url": author.picture_url if author else None
+        })
+
+    # Get assigned_by user name
+    assigned_by_user = db.query(User).filter(User.id == assignment.assigned_by).first()
+    assigned_by_name = assigned_by_user.name if assigned_by_user else "Unknown"
+
     return {
         "id": assignment.id,
         "zone_id": assignment.zone_id,
@@ -456,11 +516,16 @@ async def get_my_assignment(
         "status": assignment.status,
         "started_at": assignment.started_at,
         "completed_at": assignment.completed_at,
+        "notes": assignment.notes,
+        "manual_completion_percentage": assignment.manual_completion_percentage,
         "zone_name": zone.name,
         "zone_color": zone.color,
         "project_id": project.id,
         "project_name": project.name,
-        "zone_geometry": geometry_geojson
+        "zone_geometry": geometry_geojson,
+        "notes_list": notes_list,
+        "other_volunteers": other_volunteers,
+        "assigned_by_name": assigned_by_name
     }
 
 
@@ -475,20 +540,93 @@ async def update_my_assignment_status(
     # Check that assignment belongs to current user
     assignment = check_assignment_access(assignment_id, current_user, db, require_volunteer=True)
 
-    # Update status
+    # Validate status transition
     old_status = assignment.status
+    allowed_transitions = {
+        'assigned': ['in_progress'],
+        'in_progress': ['assigned', 'completed'],
+        'completed': ['in_progress']  # Allow reactivating completed zones
+    }
+
+    if status_update.status not in allowed_transitions.get(old_status, []):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid status transition from {old_status} to {status_update.status}. "
+                   f"Allowed transitions: {', '.join(allowed_transitions.get(old_status, []))}"
+        )
+
+    # Update status
     assignment.status = status_update.status
 
     # Auto-set timestamps
-    if status_update.status == 'in_progress' and not assignment.started_at:
-        assignment.started_at = datetime.utcnow()
+    if status_update.status == 'in_progress':
+        if old_status == 'completed':
+            # Reactivating a completed zone - clear completed_at
+            assignment.completed_at = None
+        if not assignment.started_at:
+            # First time starting
+            assignment.started_at = datetime.utcnow()
     elif status_update.status == 'completed' and not assignment.completed_at:
         assignment.completed_at = datetime.utcnow()
+    elif status_update.status == 'assigned' and old_status == 'in_progress':
+        # Reset when going back to assigned
+        assignment.started_at = None
 
     db.commit()
     db.refresh(assignment)
 
     logger.info(f"Assignment {assignment_id} status updated from {old_status} to {status_update.status} by volunteer {current_user.name}")
+
+    # Get zone and project details for response
+    zone = db.query(Zone).filter(Zone.id == assignment.zone_id).first()
+    project = db.query(Project).filter(Project.id == zone.project_id).first()
+    geometry_geojson = json.loads(db.scalar(zone.geometry.ST_AsGeoJSON()))
+
+    # Return with empty lists for notes and other volunteers (can be populated on full get)
+    return {
+        "id": assignment.id,
+        "zone_id": assignment.zone_id,
+        "volunteer_id": assignment.volunteer_id,
+        "assigned_by": assignment.assigned_by,
+        "assigned_at": assignment.assigned_at,
+        "status": assignment.status,
+        "started_at": assignment.started_at,
+        "completed_at": assignment.completed_at,
+        "notes": assignment.notes,
+        "manual_completion_percentage": assignment.manual_completion_percentage,
+        "zone_name": zone.name,
+        "zone_color": zone.color,
+        "project_id": project.id,
+        "project_name": project.name,
+        "zone_geometry": geometry_geojson,
+        "notes_list": [],
+        "other_volunteers": []
+    }
+
+
+@router.patch("/my-assignments/{assignment_id}", response_model=AssignmentWithZone)
+async def update_my_assignment(
+    assignment_id: UUID,
+    update_data: VolunteerAssignmentUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Update assignment notes and manual completion percentage (volunteer only)"""
+    # Check that assignment belongs to current user
+    assignment = check_assignment_access(assignment_id, current_user, db, require_volunteer=True)
+
+    # Update notes if provided
+    if update_data.notes is not None:
+        assignment.notes = update_data.notes
+
+    # Update manual completion percentage if provided
+    if update_data.manual_completion_percentage is not None:
+        assignment.manual_completion_percentage = update_data.manual_completion_percentage
+
+    db.commit()
+    db.refresh(assignment)
+
+    logger.info(f"Assignment {assignment_id} updated by volunteer {current_user.name}")
 
     # Get zone and project details for response
     zone = db.query(Zone).filter(Zone.id == assignment.zone_id).first()
@@ -504,6 +642,8 @@ async def update_my_assignment_status(
         "status": assignment.status,
         "started_at": assignment.started_at,
         "completed_at": assignment.completed_at,
+        "notes": assignment.notes,
+        "manual_completion_percentage": assignment.manual_completion_percentage,
         "zone_name": zone.name,
         "zone_color": zone.color,
         "project_id": project.id,

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -8,7 +6,7 @@ services:
       target: production
     container_name: flyers-backend
     environment:
-      - DATABASE_URL=postgresql://flyers_user:${DB_PASSWORD}@192.168.1.11:2775/flyers_db
+      - DATABASE_URL=postgresql://flyers_user:${DB_PASSWORD}@${DB_HOST:-192.168.1.11}:${DB_PORT:-2775}/flyers_db
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
@@ -24,7 +22,7 @@ services:
       - flyers-network
     restart: always
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/ready"]
       interval: 30s
       timeout: 10s
       retries: 3

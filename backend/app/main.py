@@ -1,4 +1,5 @@
 """Main FastAPI application"""
+# Updated: Added notes and manual_completion_percentage to zone assignments
 import logging
 from datetime import datetime
 from fastapi import FastAPI
@@ -25,7 +26,6 @@ app = FastAPI(
 )
 
 
-# Configure CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
@@ -33,8 +33,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 # Root endpoint
 @app.get("/")
@@ -47,38 +45,19 @@ async def root():
     }
 
 
-# Health check endpoint
-@app.get("/health")
-async def health_check():
-    """Health check endpoint with server info"""
-    return {
-        "status": "healthy",
-        "version": settings.APP_VERSION,
-        "start_time": SERVER_START_TIME.isoformat(),
-        "uptime_seconds": (datetime.utcnow() - SERVER_START_TIME).total_seconds()
-    }
+# API routers
+from app.routers import auth, projects, zones, assignments, completions, assignment_notes, health
 
-
-# Server info endpoint (test)
-@app.get("/server-info")
-async def server_info():
-    """Server information endpoint"""
-    return {
-        "status": "healthy",
-        "version": settings.APP_VERSION,
-        "start_time": SERVER_START_TIME.isoformat(),
-        "uptime_seconds": (datetime.utcnow() - SERVER_START_TIME).total_seconds()
-    }
-
+# Health check endpoints (no API prefix for container orchestration)
+app.include_router(health.router)
 
 # API v1 routers
-from app.routers import auth, projects, zones, assignments, completions
-
 app.include_router(auth.router, prefix=settings.API_V1_PREFIX, tags=["auth"])
 app.include_router(projects.router, prefix=settings.API_V1_PREFIX)
 app.include_router(zones.router, prefix=settings.API_V1_PREFIX)
 app.include_router(assignments.router, prefix=settings.API_V1_PREFIX)
 app.include_router(completions.router, prefix=settings.API_V1_PREFIX)
+app.include_router(assignment_notes.router, prefix=settings.API_V1_PREFIX)
 
 # To be added:
 # from app.routers import houses

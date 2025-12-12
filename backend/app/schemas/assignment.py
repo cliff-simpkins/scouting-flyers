@@ -2,7 +2,8 @@
 from pydantic import BaseModel, Field
 from uuid import UUID
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+from app.schemas.assignment_note import AssignmentNoteResponse
 
 
 class AssignmentCreate(BaseModel):
@@ -23,6 +24,12 @@ class VolunteerStatusUpdate(BaseModel):
     status: str = Field(..., pattern='^(in_progress|completed)$')
 
 
+class VolunteerAssignmentUpdate(BaseModel):
+    """Schema for volunteers to update their assignment notes and completion percentage"""
+    notes: Optional[str] = None
+    manual_completion_percentage: Optional[int] = Field(None, ge=0, le=100)
+
+
 class AssignmentResponse(BaseModel):
     """Basic assignment response schema"""
     id: UUID
@@ -33,6 +40,8 @@ class AssignmentResponse(BaseModel):
     status: str
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+    notes: Optional[str] = None
+    manual_completion_percentage: Optional[int] = Field(None, ge=0, le=100)
 
     class Config:
         from_attributes = True
@@ -43,6 +52,7 @@ class AssignmentWithVolunteer(AssignmentResponse):
     volunteer_name: str
     volunteer_email: str
     volunteer_picture_url: Optional[str] = None
+    notes_count: int = 0
 
 
 class AssignmentWithZone(AssignmentResponse):
@@ -52,6 +62,8 @@ class AssignmentWithZone(AssignmentResponse):
     project_id: UUID
     project_name: str
     zone_geometry: dict  # GeoJSON
+    notes_list: List[AssignmentNoteResponse] = []
+    other_volunteers: List['AssignmentWithVolunteer'] = []
 
 
 class VolunteerInfo(BaseModel):

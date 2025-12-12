@@ -30,6 +30,13 @@ export enum CollaboratorRole {
   PROJECT_VIEWER = 'project_viewer'
 }
 
+// Project status enum
+export enum ProjectStatus {
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  ARCHIVED = 'archived'
+}
+
 // Project interfaces
 export interface Project {
   id: string;
@@ -37,8 +44,10 @@ export interface Project {
   description: string | null;
   owner_id: string;
   is_active: boolean;
+  status: ProjectStatus;
   created_at: string;
   updated_at: string;
+  user_role?: CollaboratorRole;
 }
 
 export interface Collaborator {
@@ -66,6 +75,7 @@ export interface ProjectUpdateRequest {
   name?: string;
   description?: string;
   is_active?: boolean;
+  status?: ProjectStatus;
 }
 
 export interface CollaboratorInviteRequest {
@@ -86,6 +96,19 @@ export interface Zone {
   updated_at?: string;
 }
 
+// Assignment Note interfaces
+export interface AssignmentNote {
+  id: string;
+  assignment_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  author_name?: string;
+  author_email?: string;
+  author_picture_url?: string | null;
+}
+
 // Zone Assignment interfaces
 export interface ZoneAssignment {
   id: string;
@@ -96,9 +119,12 @@ export interface ZoneAssignment {
   status: 'assigned' | 'in_progress' | 'completed';
   started_at?: string | null;
   completed_at?: string | null;
+  notes?: string | null;
+  manual_completion_percentage?: number | null;
   volunteer_name?: string;
   volunteer_email?: string;
   volunteer_picture_url?: string | null;
+  notes_count?: number;
 }
 
 export interface ZoneWithAssignments extends Zone {
@@ -111,6 +137,9 @@ export interface ZoneAssignmentWithZone extends ZoneAssignment {
   project_id: string;
   project_name: string;
   zone_geometry: GeoJSON.Geometry;
+  notes_list?: AssignmentNote[];
+  other_volunteers?: ZoneAssignment[];
+  assigned_by_name?: string;
 }
 
 // Zone Assignment Request types

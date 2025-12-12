@@ -3,6 +3,7 @@
  */
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import { ZoneWithAssignments } from '../../types';
 import zoneAssignmentService from '../../services/zoneAssignmentService';
 import VolunteerAssignModal from './VolunteerAssignModal';
@@ -24,6 +25,7 @@ const ZoneItem: React.FC<ZoneItemProps> = ({
   onDelete,
   onAssignmentChange,
 }) => {
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isMapViewOpen, setIsMapViewOpen] = useState(false);
@@ -31,6 +33,43 @@ const ZoneItem: React.FC<ZoneItemProps> = ({
 
   const assignments = zone.assignments || [];
   const activeAssignments = assignments.filter(a => a.status !== 'completed');
+
+  // Calculate zone status
+  const getZoneStatus = () => {
+    if (assignments.length === 0) return null;
+
+    const hasInProgress = assignments.some(a => a.status === 'in_progress');
+    const allCompleted = assignments.every(a => a.status === 'completed');
+    const allAssigned = assignments.every(a => a.status === 'assigned');
+
+    if (allCompleted) return { label: 'Completed', class: 'completed' };
+    if (hasInProgress) return { label: 'In Progress', class: 'in-progress' };
+    if (allAssigned) return { label: 'Not Started', class: 'not-started' };
+    return { label: 'In Progress', class: 'in-progress' };
+  };
+
+  // Calculate average completion percentage
+  const getAverageCompletion = () => {
+    if (assignments.length === 0) return null;
+
+    const percentages = assignments
+      .map(a => a.manual_completion_percentage)
+      .filter((p): p is number => p !== null && p !== undefined);
+
+    if (percentages.length === 0) return null;
+
+    const avg = percentages.reduce((sum, p) => sum + p, 0) / percentages.length;
+    return Math.round(avg);
+  };
+
+  // Calculate total notes count
+  const getTotalNotesCount = () => {
+    return assignments.reduce((sum, a) => sum + (a.notes_count || 0), 0);
+  };
+
+  const zoneStatus = getZoneStatus();
+  const averageCompletion = getAverageCompletion();
+  const totalNotes = getTotalNotesCount();
 
   const handleRemoveAssignment = async (assignmentId: string, volunteerName: string) => {
     if (!window.confirm(`Remove ${volunteerName} from ${zone.name}?`)) {
@@ -107,6 +146,29 @@ const ZoneItem: React.FC<ZoneItemProps> = ({
             {zone.description && (
               <div className="zone-item__description">{zone.description}</div>
             )}
+            {assignments.length > 0 && (
+              <div className="zone-item__status-row">
+                {zoneStatus && (
+                  <span className={`zone-item__status-badge zone-item__status-badge--${zoneStatus.class}`}>
+                    {zoneStatus.label}
+                  </span>
+                )}
+                {averageCompletion !== null && (
+                  <span className="zone-item__completion" title="Average completion">
+                    {averageCompletion}% complete
+                  </span>
+                )}
+                {totalNotes > 0 && (
+                  <span className="zone-item__notes-count" title="Total notes">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style={{ marginRight: '4px' }}>
+                      <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                      <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                    </svg>
+                    {totalNotes} {totalNotes === 1 ? 'note' : 'notes'}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
           <div className="zone-item__actions" onClick={(e) => e.stopPropagation()}>
             {zone.color && (
@@ -177,6 +239,16 @@ const ZoneItem: React.FC<ZoneItemProps> = ({
                       <span className={`status-badge ${getStatusBadgeClass(assignment.status)}`}>
                         {getStatusLabel(assignment.status)}
                       </span>
+                      <button
+                        className="volunteer-item__view-btn"
+                        onClick={() => navigate(`/volunteer/zones/${assignment.id}`)}
+                        title="View zone assignment"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                          <path d="M8 2.5A5.5 5.5 0 0 0 2.5 8a5.5 5.5 0 0 0 11 0A5.5 5.5 0 0 0 8 2.5zM1.5 8A6.5 6.5 0 1 1 8 14.5 6.5 6.5 0 0 1 1.5 8z"/>
+                          <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM5.5 8a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0z"/>
+                        </svg>
+                      </button>
                       {canEdit && assignment.status !== 'completed' && (
                         <button
                           className="volunteer-item__remove-btn"

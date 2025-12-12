@@ -1,0 +1,338 @@
+.dashboard {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard__header {
+  margin-bottom: 3rem;
+}
+
+.dashboard__header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  color: #111827;
+}
+
+.dashboard__welcome {
+  margin: 0;
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+.dashboard__error {
+  padding: 1rem;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.dashboard__section {
+  margin-bottom: 3rem;
+}
+
+.dashboard__section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard__section-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #111827;
+}
+
+.dashboard__view-all-btn {
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard__view-all-btn:hover {
+  background: #e5e7eb;
+}
+
+.dashboard__loading {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.dashboard__empty {
+  text-align: center;
+  padding: 3rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 2px dashed #d1d5db;
+}
+
+.dashboard__empty p {
+  margin: 0 0 1rem 0;
+  color: #6b7280;
+}
+
+.dashboard__create-btn {
+  padding: 0.75rem 1.5rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard__create-btn:hover {
+  background: #1d4ed8;
+}
+
+/* Projects Grid */
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.dashboard__project-card {
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard__project-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #2563eb;
+}
+
+.dashboard__card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.75rem;
+}
+
+.dashboard__card-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  color: #111827;
+  flex: 1;
+}
+
+.dashboard__active-badge {
+  padding: 0.25rem 0.75rem;
+  background: #d1fae5;
+  color: #059669;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dashboard__inactive-badge {
+  padding: 0.25rem 0.75rem;
+  background: #f3f4f6;
+  color: #6b7280;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dashboard__badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.dashboard__role-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dashboard__role-badge--owner {
+  background: #fce7f3;
+  color: #9f1239;
+}
+
+.dashboard__role-badge--organizer {
+  background: #ddd6fe;
+  color: #5b21b6;
+}
+
+.dashboard__role-badge--project_viewer {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.dashboard__project-status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dashboard__project-status-badge--in_progress {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.dashboard__project-status-badge--completed {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.dashboard__project-status-badge--archived {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.dashboard__card-description {
+  margin: 0 0 1rem 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.dashboard__card-footer {
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.dashboard__card-date {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Assignments List */
+.dashboard__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dashboard__assignment-card {
+  padding: 1.25rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard__assignment-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #2563eb;
+}
+
+.dashboard__assignment-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.75rem;
+}
+
+.dashboard__assignment-info {
+  flex: 1;
+}
+
+.dashboard__assignment-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.dashboard__assignment-project {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.dashboard__status-badge {
+  padding: 0.375rem 0.875rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.dashboard__status-badge--assigned {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.dashboard__status-badge--in-progress {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.dashboard__status-badge--completed {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.dashboard__assignment-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.dashboard__assignment-date {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.dashboard__chevron {
+  color: #9ca3af;
+  transition: transform 0.2s ease;
+}
+
+.dashboard__assignment-card:hover .dashboard__chevron {
+  transform: translateX(4px);
+  color: #2563eb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+
+  .dashboard__header h1 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard__welcome {
+    font-size: 1rem;
+  }
+
+  .dashboard__section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+}

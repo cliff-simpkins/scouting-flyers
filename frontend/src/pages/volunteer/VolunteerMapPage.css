@@ -244,3 +244,4 @@
     height: 400px;
   }
 }
+.volunteer-assignment-card__btn--view { display: flex; align-items: center; gap: 0.5rem; background: #2563eb; color: white; } .volunteer-assignment-card__btn--view:hover { background: #1d4ed8; } .volunteer-assignment-card { transition: all 0.2s ease; } .volunteer-assignment-card:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); border-color: #2563eb; }
